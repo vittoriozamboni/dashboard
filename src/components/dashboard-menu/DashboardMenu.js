@@ -1,15 +1,18 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import './dashboard-menu.scss';
+import { ELEMENTS_PROPS } from './constants';
 
 export class DashboardMenu extends Component {
     constructor(props) {
         super(props);
+        this.elementsProps = [ELEMENTS_PROPS.LEFT, ELEMENTS_PROPS.CENTER, ELEMENTS_PROPS.RIGHT];
 
         this.state = {
             bodyStatus: {
                 open: false,
-            }
+            },
+            openItem: null
         };
     }
 
@@ -22,31 +25,27 @@ export class DashboardMenu extends Component {
     }
 
     render() {
-        const { left, center, right } = this.props;
         const { bodyStatus } = this.state;
-
+        
         return <div className="dashboard-menu__container">
-            <div className="dashboard-menu__header" onClick={() => this.toggleBodyOpen()}>
-                <div className="dashboard-menu__header-block">
-                    {left && left}
-                    {!left &&
-                        <span className="dashboard-menu__header-item">Menu Item 1 (<i>left prop</i>)</span>
-                    }
-                </div>
-                <div className="dashboard-menu__header-block">
-                    <span className="dashboard-menu__header-item">
-                        {center && center}
-                        {!center &&
-                            <Fragment>~ Click me to toggle the body ~ (override with <i>center prop</i>)</Fragment>
-                        }
-                    </span>
-                </div>
-                <div className="dashboard-menu__header-block">
-                    {right && right}
-                    {!right &&
-                        <span className="dashboard-menu__header-item">Hello user! (<em>right prop</em>)</span>
-                    }
-                </div>                
+            <div className="dashboard-menu__header">
+                {this.elementsProps.map(elementProp => {
+                    if (!this.props[elementProp]) return <Fragment></Fragment>;
+                    const items = Array.isArray(this.props[elementProp]) ? this.props[elementProp] : [this.props[elementProp]];
+
+                    return <div className="dashboard-menu__header-block" key={`dashboard-menu-header-${elementProp}`}>
+                        {items.map((item, index) => {
+                            return <Fragment key={`dashboard-menu-header-${elementProp}-${index}`}>
+                                {typeof item === 'string' &&
+                                    <span className="dashboard-menu__header-item">{item}</span>
+                                }
+                                {React.isValidElement(item) &&
+                                    item
+                                }
+                            </Fragment>;
+                        })}
+                    </div>;
+                })}
             </div>
             {bodyStatus.open &&
                 <div className="dashboard-menu__body">
@@ -57,8 +56,17 @@ export class DashboardMenu extends Component {
     }
 };
 
+const elementsPropType = PropTypes.oneOfType([
+    PropTypes.node, PropTypes.string,
+    PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.node, PropTypes.string
+        ])
+    )
+]);
+
 DashboardMenu.propTypes = {
-    left: PropTypes.oneOf([PropTypes.element, PropTypes.string]),
-    center: PropTypes.oneOf([PropTypes.element, PropTypes.string]),
-    right: PropTypes.oneOf([PropTypes.element, PropTypes.string]),
+    left: elementsPropType,
+    center: elementsPropType,
+    right: elementsPropType,
 };
