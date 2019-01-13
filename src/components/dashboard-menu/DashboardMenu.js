@@ -26,6 +26,8 @@ export class DashboardMenu extends Component {
 
     render() {
         const { bodyStatus } = this.state;
+        const usedSections = this.elementsProps.filter(elementProp => this.props[elementProp] !== undefined).length;
+        const sectionWidth = Math.floor(100 / usedSections);
         
         return <div className="dashboard-menu__container">
             <div className="dashboard-menu__header">
@@ -33,7 +35,11 @@ export class DashboardMenu extends Component {
                     if (!this.props[elementProp]) return <Fragment></Fragment>;
                     const items = Array.isArray(this.props[elementProp]) ? this.props[elementProp] : [this.props[elementProp]];
 
-                    return <div className="dashboard-menu__header-block" key={`dashboard-menu-header-${elementProp}`}>
+                    return <div
+                            className={`dashboard-menu__header-block dashboard-menu__header-block--${elementProp}`}
+                            style={{width: `${sectionWidth}%`}}
+                            key={`dashboard-menu-header-${elementProp}`}
+                        >
                         {items.map((item, index) => {
                             return <Fragment key={`dashboard-menu-header-${elementProp}-${index}`}>
                                 {typeof item === 'string' &&
