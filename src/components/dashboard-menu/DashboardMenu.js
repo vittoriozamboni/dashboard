@@ -3,32 +3,69 @@ import PropTypes from 'prop-types';
 import './dashboard-menu.scss';
 import { ELEMENTS_PROPS } from './constants';
 
+export class DashboardItem extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showQueryBar: true,
+            showQueryPrefix: true,
+        };
+    }
+
+    render() {
+        const { bodyComponent: BodyComponent } = this.props;
+        return <span className="dashboard-menu__body-item"><BodyComponent /></span>;
+    }
+}
+
+DashboardItem.propTypes = {
+    bodyComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+};
+
+export const DashboardItemBodyPropTypes = {
+};
+
 export class DashboardMenu extends Component {
     constructor(props) {
         super(props);
         this.elementsProps = [ELEMENTS_PROPS.LEFT, ELEMENTS_PROPS.CENTER, ELEMENTS_PROPS.RIGHT];
 
         this.state = {
-            bodyStatus: {
-                open: false,
-            },
-            openItem: null
+            bodyOpen: false,
+            selectedItem: null
         };
     }
 
     toggleBodyOpen = (forcedStatus) => {
-        const { bodyStatus } = this.state;
+        const { bodyOpen } = this.state;
         const newOpenStatus = forcedStatus !== undefined
             ? forcedStatus
-            : bodyStatus.open ? false : true;
-        this.setState({ bodyStatus: {...bodyStatus, open: newOpenStatus } });
+            : bodyOpen ? false : true;
+        this.setState({ bodyOpen: newOpenStatus });
+    }
+
+    toggleSetItem = (item, openBody) => {
+        const { selectedItem } = this.state;
+        if (selectedItem === item) {
+            this.setState({
+                selectedItem: null,
+                bodyOpen: false
+            });            
+        } else {
+            const newState = {selectedItem: item};
+            if (openBody !== undefined) newState.bodyOpen = openBody;
+            this.setState(newState);
+        }
     }
 
     render() {
-        const { bodyStatus } = this.state;
+        const { bodyOpen, selectedItem } = this.state;
         const usedSections = this.elementsProps.filter(elementProp => this.props[elementProp] !== undefined).length;
         const sectionWidth = Math.floor(100 / usedSections);
         
+        const SelectedItemBody = selectedItem && selectedItem.hasOwnProperty('bodyItem') ? selectedItem.bodyItem : null;
+
         return <div className="dashboard-menu__container">
             <div className="dashboard-menu__header">
                 {this.elementsProps.map(elementProp => {
@@ -41,11 +78,15 @@ export class DashboardMenu extends Component {
                             key={`dashboard-menu-header-${elementProp}`}
                         >
                         {items.map((item, index) => {
+                            const itemHeader = item.hasOwnProperty('headerLabel') ? item.headerLabel : null;
                             return <Fragment key={`dashboard-menu-header-${elementProp}-${index}`}>
                                 {typeof item === 'string' &&
                                     <span className="dashboard-menu__header-item">{item}</span>
                                 }
-                                {React.isValidElement(item) &&
+                                {itemHeader &&
+                                    <span className="dashboard-menu__header-item dashboard-menu__header-dashboard-item" onClick={() => this.toggleSetItem(item, true)}>{item.headerLabel}</span>
+                                }
+                                {React.isValidElement(item) && !item.hasOwnProperty('renderHeader') &&
                                     item
                                 }
                             </Fragment>;
@@ -53,9 +94,11 @@ export class DashboardMenu extends Component {
                     </div>;
                 })}
             </div>
-            {bodyStatus.open &&
+            {bodyOpen &&
                 <div className="dashboard-menu__body">
-                    This is the body of the menu, will include useful links to any application part!
+                    {SelectedItemBody &&
+                        <SelectedItemBody />
+                    }
                 </div>
             }
         </div>;
@@ -66,7 +109,7 @@ const elementsPropType = PropTypes.oneOfType([
     PropTypes.node, PropTypes.string,
     PropTypes.arrayOf(
         PropTypes.oneOfType([
-            PropTypes.node, PropTypes.string
+            PropTypes.node, PropTypes.string, PropTypes.object
         ])
     )
 ]);
