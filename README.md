@@ -54,6 +54,10 @@ Based on the passed props, the size of each blocks is calculated in percentages:
 ```js
 import { DashboardMenu } from 'components/dashboard-menu/DashboardMenu';
 
+const RightComponent = () => {
+    return <span>Hello User!</span>;
+};
+
 function Header() {
     return <DashboardMenu
         left={['Menu Item 1', 'Menu Item 2']}
@@ -67,31 +71,35 @@ Dashboard Menu has a special section called `body`. It represents an invisible (
 In order to be used, a special type of object should be passed in a block. It must have at least two keys, `headerLabel` and `bodyItem`. 
 The first is a string or a component that will be rendered in the header; when `headerLabel` is clicked the second will be
 rendered inside the body (the hidden part).
-This should be an instance of `DashboardItem` component, with a property called `bodyComponent` that will render the body itself.
+This should extend `DashboardItem` component, which will receive few props from DashboardMenu itself.
 ```js
-import { DashboardMenu, DashboardItem, DashboardItemBodyPropTypes } from 'components/dashboard-menu/DashboardMenu';
+import React, { Component } from 'react';
+import { DashboardMenu, DashboardItem } from 'components/dashboard-menu/DashboardMenu';
 
-class ApplicationsBody extends Component {
+const RightComponent = () => {
+    return <span>Hello User!</span>;
+};
+
+class Applications extends DashboardItem {
     render() {
+        const { query } = this.props;
+
         return <div>
-            This will be the list of installed applications!
+            This will be the list of installed applications! Query: {query}
         </div>;
     }
 }
 
-/* Extends propTypes with the one passed by DashboardMenu on render */
-ApplicationsBody.propTypes = {
-    ...DashboardItemBodyPropTypes,
-};
-
-const Applications = () => <DashboardItem bodyComponent={ApplicationsBody} />;
-
-function Header() {
-    return <DashboardMenu
-        left={[{ headerLabel: 'Applications', bodyItem: Applications }, 'Menu Item 2']}
-        center='Dashboard'
-        right={<RightComponent />}
-    />
+export class Header extends Component {
+    render() {
+        return <header>
+            <DashboardMenu
+                left={[{ headerLabel: 'Applications', bodyItem: Applications }, 'Menu Item 2']}
+                center='Dashboard'
+                right={<RightComponent />}
+            />
+        </header>;
+    }
 }
 ```
 

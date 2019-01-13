@@ -1,23 +1,19 @@
 import React, { Component } from 'react';
-import { DashboardMenu, DashboardItem, DashboardItemBodyPropTypes } from 'components/dashboard-menu/DashboardMenu';
+import { DashboardMenu, DashboardItem } from 'components/dashboard-menu/DashboardMenu';
 
 const RightComponent = () => {
     return <span>Hello User!</span>;
 };
 
-class ApplicationsBody extends Component {
+class Applications extends DashboardItem {
     render() {
+        const { query } = this.props;
+
         return <div>
-            This will be the list of installed applications!
+            This will be the list of installed applications! Query: {query}
         </div>;
     }
 }
-
-ApplicationsBody.propTypes = {
-    ...DashboardItemBodyPropTypes,
-};
-
-const Applications = () => <DashboardItem bodyComponent={ApplicationsBody} />;
 
 export class Header extends Component {
     render() {

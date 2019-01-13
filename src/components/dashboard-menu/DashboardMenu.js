@@ -14,16 +14,11 @@ export class DashboardItem extends Component {
     }
 
     render() {
-        const { bodyComponent: BodyComponent } = this.props;
-        return <span className="dashboard-menu__body-item"><BodyComponent /></span>;
+        return <div>This render should be overridden!</div>;
     }
 }
 
 DashboardItem.propTypes = {
-    bodyComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-};
-
-export const DashboardItemBodyPropTypes = {
 };
 
 export class DashboardMenu extends Component {
@@ -33,7 +28,8 @@ export class DashboardMenu extends Component {
 
         this.state = {
             bodyOpen: false,
-            selectedItem: null
+            selectedItem: null,
+            query: '',
         };
     }
 
@@ -59,8 +55,16 @@ export class DashboardMenu extends Component {
         }
     }
 
+    updateQuery = (query) => {
+        this.setState({query});
+    }
+
+    handleChangeQuery = (event) => {
+        this.updateQuery(event.target.value);
+    }
+
     render() {
-        const { bodyOpen, selectedItem } = this.state;
+        const { bodyOpen, selectedItem, query } = this.state;
         const usedSections = this.elementsProps.filter(elementProp => this.props[elementProp] !== undefined).length;
         const sectionWidth = Math.floor(100 / usedSections);
         
@@ -96,8 +100,13 @@ export class DashboardMenu extends Component {
             </div>
             {bodyOpen &&
                 <div className="dashboard-menu__body">
+                    <div className="dashboard-menu__body-query">
+                        <input type="text" className="dashboard-menu__body-query__input" value={query} onChange={this.handleChangeQuery} />
+                    </div>
                     {SelectedItemBody &&
-                        <SelectedItemBody />
+                        <div className="dashboard-menu__body-item">
+                            <SelectedItemBody query={query} />
+                        </div>
                     }
                 </div>
             }
