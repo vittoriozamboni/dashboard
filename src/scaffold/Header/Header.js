@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { DashboardMenu, DashboardItem } from 'components/dashboard-menu/DashboardMenu';
+import { DashboardMenu } from 'components/dashboard-menu/DashboardMenu';
+import { DashboardItem } from 'components/dashboard-menu/DashboardItem';
 
 const RightComponent = () => {
     return <span>Hello User!</span>;

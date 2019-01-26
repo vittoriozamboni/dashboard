@@ -3,24 +3,6 @@ import PropTypes from 'prop-types';
 import './dashboard-menu.scss';
 import { ELEMENTS_PROPS } from './constants';
 
-export class DashboardItem extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            showQueryBar: true,
-            showQueryPrefix: true,
-        };
-    }
-
-    render() {
-        return <div>This render should be overridden!</div>;
-    }
-}
-
-DashboardItem.propTypes = {
-};
-
 export class DashboardMenu extends Component {
     constructor(props) {
         super(props);
@@ -42,12 +24,16 @@ export class DashboardMenu extends Component {
     }
 
     toggleSetItem = (item, openBody) => {
-        const { selectedItem } = this.state;
+        const { selectedItem, bodyOpen } = this.state;
         if (selectedItem === item) {
-            this.setState({
-                selectedItem: null,
-                bodyOpen: false
-            });            
+            if (!bodyOpen) {
+                this.setState({ bodyOpen: openBody });
+            } else {
+                this.setState({
+                    selectedItem: null,
+                    bodyOpen: false
+                });            
+            }
         } else {
             const newState = {selectedItem: item};
             if (openBody !== undefined) newState.bodyOpen = openBody;
@@ -100,8 +86,15 @@ export class DashboardMenu extends Component {
             </div>
             {bodyOpen &&
                 <div className="dashboard-menu__body">
-                    <div className="dashboard-menu__body-query">
-                        <input type="text" className="dashboard-menu__body-query__input" value={query} onChange={this.handleChangeQuery} />
+                    <div className="dashboard-menu__body-header">
+                        <div className="dashboard-menu__body-query">
+                            <input type="text" value={query} placeholder="Type your query here..."
+                                className="dashboard-menu__body-query__input"
+                                onChange={this.handleChangeQuery} />
+                        </div>
+                        <div className="dashboard-menu__body-controls">
+                            <i className="fas fa-times dashboard-menu__body-controls__control" onClick={() => this.toggleBodyOpen(false)}></i>
+                        </div>
                     </div>
                     {SelectedItemBody &&
                         <div className="dashboard-menu__body-item">
@@ -115,7 +108,7 @@ export class DashboardMenu extends Component {
 };
 
 const elementsPropType = PropTypes.oneOfType([
-    PropTypes.node, PropTypes.string,
+    PropTypes.node, PropTypes.string, PropTypes.object,
     PropTypes.arrayOf(
         PropTypes.oneOfType([
             PropTypes.node, PropTypes.string, PropTypes.object
