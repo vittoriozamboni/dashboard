@@ -19,7 +19,7 @@ export class DashboardMenu extends Component {
         const { bodyOpen } = this.state;
         const newOpenStatus = forcedStatus !== undefined
             ? forcedStatus
-            : bodyOpen ? false : true;
+            : !bodyOpen;
         this.setState({ bodyOpen: newOpenStatus });
     }
 
