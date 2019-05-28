@@ -1,0 +1,94 @@
+.dag-ui__container {
+    height: calc(100% - 73px);
+    padding-bottom: 0;
+}
+
+.dag-ui__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+}
+
+.dag-ui__header > div {
+    display: inline-flex;
+}
+
+.dag-ui__full-section-container {
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: auto;    
+}
+
+.dag-ui__section {
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: hsl(216, 33%, 97%);
+    border: 1px solid hsl(216, 33%, 97%);
+}
+
+.dag-ui__graph-container {
+    height: 100%;
+    width: 100%;
+}
+
+.dag-ui__instance__details-container {
+    height: calc(100vh - 198px);
+    overflow: auto;
+}
+
+.dag-ui__instance-step {
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 1px 0;
+}
+
+.dag-ui__instance-step-completed {
+    background-color: #199473;
+    color: white;
+}
+.dag-ui__instance-step-running {
+    background-color: #1280bf;
+    color: white;
+}
+.dag-ui__instance-step-queued {
+    background-color: #f0b428;
+    color: white;
+}
+.dag-ui__instance-step-skipped {
+    background-color: #7b8793;
+    color: white;
+}
+
+.dag-ui__instance-step__title {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+}
+
+.dag-ui__instance-step__title-details {
+    font-size: 12px;
+}
+
+.dag-ui__instance-step__details {
+    background-color: white;
+    border: 1px solid white;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin: 0 2px 1px 2px;
+    padding: 10px 10px 5px 10px;
+    color: #33404d;
+}
+
+.dag-ui__instance-step__details > div > label {
+    width: 115px;
+    display: inline-block;
+    font-weight: 300;
+}
+
+.dag-ui__instance-step__details div {
+    margin-bottom: 5px;
+}

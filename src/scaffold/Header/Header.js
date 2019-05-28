@@ -19,6 +19,12 @@ class Applications extends DashboardItem {
             link: '/apps/finance'
         },
         {
+            name: 'DAG UI',
+            tags: generateTags('DAG Directed Acyclic Graph'),
+            icon: <i className="fas fa-project-diagram"></i>,
+            link: '/dag-ui'
+        },
+        {
             name: 'Machine Learning',
             tags: generateTags('Machine Learning'),
             icon: <i className="fas fa-cogs"></i>,
