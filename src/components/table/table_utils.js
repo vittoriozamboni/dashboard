@@ -1,5 +1,3 @@
-import { SCROLLBAR_SIZE } from "./constants";
-
 export function getColumnsStyle(columns, tableStyleState, config) {
     const columnsStyle = {};
     columns.forEach(col => {
@@ -9,24 +7,40 @@ export function getColumnsStyle(columns, tableStyleState, config) {
         } else if (tableStyleState.expandableColumnWidth) {
             columnsStyle[col.prop].width = tableStyleState.expandableColumnWidth + 'px';
         }
-        if (config.padding) {
-            columnsStyle[col.prop].padding = config.padding + 'px';
-        }
     });
     return columnsStyle;
 }
 
+export function getCellsStyle(columns, tableStyleState, config) {
+    const cellsStyle = {};
+    columns.forEach(col => {
+        cellsStyle[col.prop] = {};
+        if (col.width) {
+            cellsStyle[col.prop].maxWidth = (col.width - 5) + 'px';
+        } else if (tableStyleState.expandableColumnWidth) {
+            cellsStyle[col.prop].maxWidth = (tableStyleState.expandableColumnWidth - 5) + 'px';
+        }
+        if (config.padding) {
+            cellsStyle[col.prop].padding = config.padding + 'px';
+        }
+    });
+    return cellsStyle;
+}
 
-export function getHeaderTablesStyle({ bodyHasVericalScrollBar }) {
+
+export function getHeaderTablesStyle({ tableStyleState }) {
     const style = {};
-    style.width = bodyHasVericalScrollBar ? `calc(100% - ${SCROLLBAR_SIZE}px` : '100%';
+
+    style.width = tableStyleState.totalWidth + 'px';
+    style.display = 'block';
 
     return style;
 }
 
 export function getMainTableHeaderContainerStyle({ bodyHasHorizontalScrollBar }) {
     const style = {};
-    style.marginBottom = bodyHasHorizontalScrollBar ? '-14px' : undefined;
+    style.marginBottom = '-15px';
+
     return style;
 }
 
@@ -39,9 +53,11 @@ export function getMainTableHeaderContainerClass({ bodyHasHorizontalScrollBar })
     return classes.join(' ');
 }
 
-export function getMainTableBodyStyle() {
+export function getMainTableBodyStyle({ tableStyleState }) {
     const style = {};
-    style.width = '100%';
+
+    style.width = tableStyleState.totalWidth + 'px';
+    style.display = 'block';
 
     return style;
 }

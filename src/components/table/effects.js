@@ -2,27 +2,35 @@ import { useEffect } from 'react';
 import { SCROLLBAR_SIZE } from './constants';
 
 
-export function useScrollSync(master, elementsToSync, sync) {
+export function useScrollSync(master, elementsToSync, scrollMaster, sync, onChange) {
     useEffect(() => {
-        if (master.current) {
+        if (master.current && master === scrollMaster) {
             const masterEl = master.current;
             const syncMaster = (e) => {
                 elementsToSync.forEach(ref => {
                     if (!ref.current) return;
-                    if (masterEl !== e.target) return;
+                    if (masterEl !== e.target || masterEl === ref.current) return;
 
-                    if (sync.scrollLeft)
+                    if (sync.scrollLeft) {
+                        if (ref.current.scrollLeft === masterEl.scrollLeft) return;
                         ref.current.scrollLeft = masterEl.scrollLeft;
-                    if (sync.scrollTop)
+                        onChange && onChange(masterEl.scrollLeft, 'scrollLeft');
+                    }
+
+                    if (sync.scrollTop) {
+                        if (ref.current.scrollTop === masterEl.scrollTop) return;
                         ref.current.scrollTop = masterEl.scrollTop;
+                        onChange && onChange(masterEl.scrollTop, 'scrollTop');
+                    }
                 });
             };
+
             masterEl.addEventListener('scroll', syncMaster);
             return () => {
                 masterEl.removeEventListener('scroll', syncMaster);
             };
         }
-    }, [master, elementsToSync, sync]);
+    }, [master, elementsToSync, scrollMaster, sync, onChange]);
 }
 
 export function useTableElements(tableHeaderContainerRef, tableBodyContainerRef, columns, config, setTableStyleState) {
@@ -32,20 +40,21 @@ export function useTableElements(tableHeaderContainerRef, tableBodyContainerRef,
             const bodyEl = tableBodyContainerRef.current;
             const bodyHasVericalScrollBar = bodyEl.offsetHeight !== bodyEl.scrollHeight;
             const bodyHasHorizontalScrollBar = (bodyEl.offsetWidth - (bodyEl.scrollWidth + bodyHasVericalScrollBar * 14)) !== 0;
-
             const newTableStyleState = { bodyHasVericalScrollBar, bodyHasHorizontalScrollBar };
 
-            if (columns.some(col => !!col.width)) {
+            if (columns.some(col => !col.width)) {
                 const columnsWidth = columns.reduce((tot, col) => tot += col.width || 0, 0);
-                const totCols = columns.length;
                 newTableStyleState.expandableColumnWidth = headerEl.clientWidth
                     - columnsWidth
-                    - ((SCROLLBAR_SIZE + 3) * bodyHasVericalScrollBar)
-                    - (totCols * (config.padding || 0) * 2)
-                    - (totCols * 4) * (config.borderType ? 1 : 0)
+                    - ((SCROLLBAR_SIZE + 2) * bodyHasVericalScrollBar)
                 ;
+                newTableStyleState.bodyHasHorizontalScrollBar = false;
             }
-            setTableStyleState(newTableStyleState);
+            newTableStyleState.totalWidth = columns.reduce((tot, col) => {
+                return tot + (col.width ? col.width : newTableStyleState.expandableColumnWidth);
+            }, 0);
+            console.log('Recreating table elements');
+            setTableStyleState(tableStyleState => ({ ...tableStyleState, ...newTableStyleState }));
         }
     }, [columns, config]); // eslint-disable-line
 };
