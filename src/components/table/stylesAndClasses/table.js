@@ -1,3 +1,6 @@
+import { SCROLLBAR_SIZE } from '../constants';
+
+
 export function getColumnsStyle(columns, tableStyleState, config) {
     const columnsStyle = {};
     columns.forEach(col => {
@@ -27,37 +30,16 @@ export function getCellsStyle(columns, tableStyleState, config) {
     return cellsStyle;
 }
 
+export function getComponentContainerStyleAndClasses({ columns }) {
+    const container = {
+        style: {},
+        classes: 'ui-table__container',
+    };
 
-export function getHeaderTablesStyle({ tableStyleState }) {
-    const style = {};
+    const allColumnsHaveWidth = columns.every(c => c.width !== undefined);
 
-    style.width = tableStyleState.totalWidth + 'px';
-    style.display = 'block';
+    if (allColumnsHaveWidth)
+        container.style.maxWidth = `${columns.reduce((w, c) => w + c.width, 0) + SCROLLBAR_SIZE}px`;
 
-    return style;
-}
-
-export function getMainTableHeaderContainerStyle({ bodyHasHorizontalScrollBar }) {
-    const style = {};
-    style.marginBottom = '-15px';
-
-    return style;
-}
-
-export function getMainTableHeaderContainerClass({ bodyHasHorizontalScrollBar }) {
-    const classes = [];
-    if (bodyHasHorizontalScrollBar) {
-        classes.push('ui-table__header__container--body-has-horizontal-scrollbar');
-    }
-
-    return classes.join(' ');
-}
-
-export function getMainTableBodyStyle({ tableStyleState }) {
-    const style = {};
-
-    style.width = tableStyleState.totalWidth + 'px';
-    style.display = 'block';
-
-    return style;
+    return container;
 }

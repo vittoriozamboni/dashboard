@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SCROLLBAR_SIZE } from './constants';
 
 
@@ -33,28 +33,54 @@ export function useScrollSync(master, elementsToSync, scrollMaster, sync, onChan
     }, [master, elementsToSync, scrollMaster, sync, onChange]);
 }
 
-export function useTableElements(tableHeaderContainerRef, tableBodyContainerRef, columns, config, setTableStyleState) {
+
+export function useTableElements(tableContainerRef, tableHeaderContainerRef, tableBodyContainerRef, columns, config, setTableStyleState) {
+    const containerSize = tableContainerRef.current ? tableContainerRef.current.clientWidth : 0;
+
     useEffect(() => {
         if (tableHeaderContainerRef.current && tableBodyContainerRef.current) {
             const headerEl = tableHeaderContainerRef.current;
             const bodyEl = tableBodyContainerRef.current;
             const bodyHasVericalScrollBar = bodyEl.offsetHeight !== bodyEl.scrollHeight;
-            const bodyHasHorizontalScrollBar = (bodyEl.offsetWidth - (bodyEl.scrollWidth + bodyHasVericalScrollBar * 14)) !== 0;
+            const bodyHasHorizontalScrollBar = (bodyEl.offsetWidth - (bodyEl.scrollWidth + bodyHasVericalScrollBar * 15)) !== 0;
             const newTableStyleState = { bodyHasVericalScrollBar, bodyHasHorizontalScrollBar };
 
             if (columns.some(col => !col.width)) {
                 const columnsWidth = columns.reduce((tot, col) => tot += col.width || 0, 0);
                 newTableStyleState.expandableColumnWidth = headerEl.clientWidth
                     - columnsWidth
-                    - ((SCROLLBAR_SIZE + 2) * bodyHasVericalScrollBar)
+                    - (SCROLLBAR_SIZE * bodyHasVericalScrollBar)
                 ;
                 newTableStyleState.bodyHasHorizontalScrollBar = false;
             }
             newTableStyleState.totalWidth = columns.reduce((tot, col) => {
                 return tot + (col.width ? col.width : newTableStyleState.expandableColumnWidth);
             }, 0);
-            console.log('Recreating table elements');
+
             setTableStyleState(tableStyleState => ({ ...tableStyleState, ...newTableStyleState }));
         }
-    }, [columns, config]); // eslint-disable-line
+    }, [columns, config, containerSize]); // eslint-disable-line
 };
+
+export function useHover(ref) {
+    const [isHovered, setIsHovered] = useState(false);
+
+    useEffect(() => {
+        const node = ref.current;
+
+        if (node) {
+            const hoverIn = () => setIsHovered(true);
+            const hoverOut = () => setIsHovered(false);
+
+            node.addEventListener('mouseover', hoverIn);
+            node.addEventListener('mouseout', hoverOut);
+
+            return () => {
+                node.removeEventListener('mouseover', hoverIn);
+                node.removeEventListener('mouseout', hoverOut);
+            };
+        }
+    }, [ref.current]); // eslint-disable-line
+
+    return isHovered;
+}
