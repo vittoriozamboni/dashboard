@@ -5,6 +5,7 @@ import { PageHeader } from 'components/ui/PageHeader';
 
 import { Buttons } from './Buttons';
 import { Colors } from './Colors';
+import { DropDownComponent } from './DropDownComponent';
 import { Typography } from './typography/Typography';
 import { GridComponent } from './GridComponent';
 import { TabsComponent } from './TabsComponent';
@@ -22,6 +23,7 @@ const SECTIONS = {
     BUTTONS: 'buttons',
     COLORS: 'colors',
     CARDS: 'cards',
+    DROP_DOWN_COMPONENT: 'drop-down-component',
     GRID_COMPONENT: 'grid-component',
     LOADERS: 'loaders',
     MODAL: 'modal',
@@ -35,7 +37,7 @@ const SECTIONS = {
 
 export class StyleShowcase extends Component {
     state = {
-        sectionName: SECTIONS.TABLE_COMPONENT,
+        sectionName: SECTIONS.DROP_DOWN_COMPONENT,
     }
 
     setSection = (sectionName) => {
@@ -53,6 +55,7 @@ export class StyleShowcase extends Component {
                 {sectionName === SECTIONS.BUTTONS && <Buttons />}
                 {sectionName === SECTIONS.CARDS && <CardsComponent />}
                 {sectionName === SECTIONS.COLORS && <Colors />}
+                {sectionName === SECTIONS.DROP_DOWN_COMPONENT && <DropDownComponent />}
                 {sectionName === SECTIONS.GRID_COMPONENT && <GridComponent />}
                 {sectionName === SECTIONS.LOADERS && <Loaders />}
                 {sectionName === SECTIONS.MODAL && <ModalComponent />}
@@ -79,6 +82,9 @@ function Controls({ sectionName, setSection }) {
         <button
             className={`${baseClass} ${sectionName === SECTIONS.COLORS ? 'ui-button--primary' : ''}`}
             onClick={() => setSection(SECTIONS.COLORS)}>Colors</button>
+        <button
+            className={`${baseClass} ${sectionName === SECTIONS.DROP_DOWN_COMPONENT ? 'ui-button--primary' : ''}`}
+            onClick={() => setSection(SECTIONS.DROP_DOWN_COMPONENT)}>DropDowns</button>
         <button
             className={`${baseClass} ${sectionName === SECTIONS.TYPOGRAPHY ? 'ui-button--primary' : ''}`}
             onClick={() => setSection(SECTIONS.TYPOGRAPHY)}>Typography</button>
